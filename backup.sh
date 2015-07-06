@@ -4,7 +4,6 @@ while [[ ${#} > 0 ]]
 do
     key="${1}"
 
-    echo "key: $key"
     case ${key} in
         -f|--force)
             FORCE="1"
@@ -52,7 +51,6 @@ backup_files() {
     if [ "${gpg}" == "1" ]; then
         dst=${dst}.tar.gz.gpg
         if [ -f "${dst}" -a "${FORCE}" != "1" ] ; then
-            echo ${FORCE}
             echo "${dst} exists. Use -f to force overwrite" 1>&2
             exit 2
         fi
@@ -68,17 +66,25 @@ backup_files() {
 }
 
 load_vars() {
-    local backup_conf=.backup.conf
+    local backup_conf=~/.backup.conf
     if [ -f "${backup_conf}" ]; then
         echo $(cat ${backup_conf} |grep -v ^# |xargs)
     fi
 }
 
-declare $(load_vars)
+vars=$(load_vars)
+if [ -n "${vars}" ] ; then
+    declare ${vars}
+fi
 
 if [ -n "${GPGTARGET}" ] ; then
     gpg=1
     gpgtarget=${GPGTARGET}
+fi
+
+if [ -z "${SOURCE}" -o -z "${DESTINATION}" ] ; then
+    echo "Provide source and destination."
+    exit 3
 fi
 
 backup_dir $SOURCE $DESTINATION
