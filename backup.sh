@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-while [[ ${#} > 0 ]]
+while [[ ${#} -gt 0 ]]
 do
     key="${1}"
 
@@ -68,11 +68,11 @@ backup_files() {
 load_vars() {
     local backup_conf=~/.backup.conf
     if [ -f "${backup_conf}" ]; then
-        echo $(cat ${backup_conf} |grep -v ^# |xargs)
+        echo `cat ${backup_conf} |grep -v ^# |xargs`
     fi
 }
 
-vars=$(load_vars)
+vars=`load_vars`
 if [ -n "${vars}" ] ; then
     declare ${vars}
 fi
